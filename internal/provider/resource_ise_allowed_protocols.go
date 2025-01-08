@@ -462,7 +462,6 @@ func (r *AllowedProtocolsResource) Create(ctx context.Context, req resource.Crea
 	}
 	locationElements := strings.Split(location, "/")
 	plan.Id = types.StringValue(locationElements[len(locationElements)-1])
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)

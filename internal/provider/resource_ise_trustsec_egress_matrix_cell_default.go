@@ -142,7 +142,6 @@ func (r *TrustSecEgressMatrixCellDefaultResource) Create(ctx context.Context, re
 		return
 	}
 	plan.Id = types.StringValue(gjson.Get(body, "EgressMatrixCell.id").String())
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)

@@ -132,7 +132,6 @@ func (r *NetworkAccessAuthorizationGlobalExceptionRuleUpdateRankResource) Create
 		return
 	}
 	plan.Id = types.StringValue(fmt.Sprint(plan.RuleId.ValueString()))
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)

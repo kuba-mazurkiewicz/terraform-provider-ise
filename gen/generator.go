@@ -123,6 +123,7 @@ type YamlConfig struct {
 	ExcludeTest         bool                  `yaml:"exclude_test"`
 	SkipMinimumTest     bool                  `yaml:"skip_minimum_test"`
 	IgnoreDeleteError   string                `yaml:"ignore_delete_error"`
+	IsBulk              bool                  `yaml:"is_bulk"`
 	Attributes          []YamlConfigAttribute `yaml:"attributes"`
 	TestTags            []string              `yaml:"test_tags"`
 	TestPrerequisites   string                `yaml:"test_prerequisites"`
@@ -201,6 +202,11 @@ func SnakeCase(s string) string {
 		g = append(g, strings.ToLower(value))
 	}
 	return strings.Join(g, "_")
+}
+
+// Templating helper function to fail a template mid-way
+func Errorf(s string, args ...any) (struct{}, error) {
+	return struct{}{}, fmt.Errorf(s, args...)
 }
 
 // Templating helper function to build a SJSON path
@@ -360,6 +366,7 @@ var functions = template.FuncMap{
 	"strContains":            strings.Contains,
 	"strReplace":             strings.Replace,
 	"snakeCase":              SnakeCase,
+	"errorf":                 Errorf,
 	"sprintf":                fmt.Sprintf,
 	"toLower":                strings.ToLower,
 	"path":                   BuildPath,

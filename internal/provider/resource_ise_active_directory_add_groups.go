@@ -164,7 +164,6 @@ func (r *ActiveDirectoryAddGroupsResource) Create(ctx context.Context, req resou
 		return
 	}
 	plan.Id = types.StringValue(fmt.Sprint(plan.JoinPointId.ValueString()))
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)

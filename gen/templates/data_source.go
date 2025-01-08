@@ -201,7 +201,7 @@ func (d *{{camelCase .Name}}DataSource) Read(ctx context.Context, req datasource
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", {{if not .NoId}}config.Id.ValueString(){{else}}""{{end}}))
 
-	{{- if .DataSourceNameQuery}}
+	{{- if and .DataSourceNameQuery (not .IsBulk)}}
 	if config.Id.IsNull() && !config.Name.IsNull() {
 		for page := 1; ; page++ {
 			res, err := d.client.Get({{if $openApi}}config.getPath(){{else}}fmt.Sprintf("%s?size=100&page=%v", config.getPath(), page){{end}})

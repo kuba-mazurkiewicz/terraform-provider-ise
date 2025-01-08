@@ -132,7 +132,6 @@ func (r *NetworkAccessPolicySetUpdateRankResource) Create(ctx context.Context, r
 		return
 	}
 	plan.Id = types.StringValue(fmt.Sprint(plan.PolicySetId.ValueString()))
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)

@@ -1,0 +1,1 @@
+terraform import ise_network_access_authentication_rules_bulk.example "d82952cb-b901-4b09-b363-5ebf39bdbaf9"

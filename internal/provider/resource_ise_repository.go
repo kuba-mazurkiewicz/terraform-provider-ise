@@ -147,7 +147,6 @@ func (r *RepositoryResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 	plan.Id = types.StringValue(fmt.Sprint(plan.Name.ValueString()))
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)

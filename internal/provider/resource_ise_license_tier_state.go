@@ -134,7 +134,6 @@ func (r *LicenseTierStateResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 	plan.Id = types.StringValue(res.Get("version").String())
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)

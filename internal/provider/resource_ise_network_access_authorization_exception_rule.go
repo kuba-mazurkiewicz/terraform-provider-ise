@@ -279,7 +279,6 @@ func (r *NetworkAccessAuthorizationExceptionRuleResource) Create(ctx context.Con
 		return
 	}
 	plan.Id = types.StringValue(res.Get("response.rule.id").String())
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)

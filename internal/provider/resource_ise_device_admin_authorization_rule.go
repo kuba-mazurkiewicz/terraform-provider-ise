@@ -312,7 +312,6 @@ func (r *DeviceAdminAuthorizationRuleResource) Create(ctx context.Context, req r
 			return
 		}
 	}
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)

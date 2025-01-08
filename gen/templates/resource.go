@@ -468,6 +468,16 @@ func (r *{{camelCase .Name}}Resource) Create(ctx context.Context, req resource.C
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Create", plan.Id.ValueString()))
 
+	{{- if .IsBulk}}
+	{{- $id := getId .Attributes}}
+	// Create request is split to multiple requests, where just subset of them may be successful
+	state := {{camelCase .Name}}{}
+	state.Items = make([]{{camelCase .Name}}Items, len(plan.Items))
+	state.Id = types.StringValue(fmt.Sprint(plan.{{toGoName $id.TfName}}.Value{{$id.Type}}()))
+	// Create object
+	plan, diags = r.createSubresources(ctx, state, plan)
+	resp.Diagnostics.Append(diags...)
+	{{- else}}
 	{{- if strContains (camelCase .Name) "UpdateRank" }}
 	// Read existing attributes from the API
 	{{- if strContains (camelCase .Name) "Rule" }}
@@ -583,7 +593,7 @@ func (r *{{camelCase .Name}}Resource) Create(ctx context.Context, req resource.C
 	}
 	{{- end}}
 	{{- end}}
-
+	{{- end}}
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)
@@ -786,3 +796,44 @@ func (r *{{camelCase .Name}}Resource) ImportState(ctx context.Context, req resou
 }
 {{- end}}
 //template:end import
+
+{{- if .IsBulk}}
+//template:begin createSubresources
+
+// createSubresources takes list of objects and creates them one by one
+// We want to save the state after each create event, to be able track already created resources
+func (r *{{camelCase .Name}}Resource) createSubresources(ctx context.Context, state, plan {{camelCase .Name}}) ({{camelCase .Name}}, diag.Diagnostics) {	
+
+	tflog.Debug(ctx, fmt.Sprintf("%s: One-by-one creation mode ({{.Name}})", state.Id.ValueString()))
+	var tmpObject {{camelCase .Name}}
+    tmpObject.Items = make([]{{camelCase .Name}}Items, len(plan.Items))
+	for k, v := range plan.Items {
+		tmpObject.Items[k] = v
+
+		body := tmpObject.toBody(ctx, state)
+		res, _, err := r.client.Post(plan.getPath(), body)
+		if err != nil {
+			return state, diag.Diagnostics{
+				diag.NewErrorDiagnostic("Client Error", fmt.Sprintf("%s: Failed to create object (POST) id %s, got error: %s, %s", state.Id.ValueString(), v.Id.ValueString(), err, res.String())),
+			}
+		}
+
+		// fromBodyUnknowns expect result to be listed under "items" key
+		body, _ = sjson.SetRaw("{items:[]}", "items.-1", res.String())
+		res = gjson.Parse(body)
+
+		// Read computed values
+		tmpObject.fromBodyUnknowns(ctx, res)
+
+		// Save object to plan
+		state.Items[k] = tmpObject.Items[k]
+
+        // Clear tmpObject.Items
+        tmpObject.Items[k] = {{camelCase .Name}}Items{}
+
+	}
+
+	return state, nil
+}
+//template:end createSubresources
+{{- end}}

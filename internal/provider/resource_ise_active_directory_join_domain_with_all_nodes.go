@@ -132,7 +132,6 @@ func (r *ActiveDirectoryJoinDomainWithAllNodesResource) Create(ctx context.Conte
 		return
 	}
 	plan.Id = types.StringValue(fmt.Sprint(plan.JoinPointId.ValueString()))
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)

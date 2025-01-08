@@ -312,7 +312,6 @@ func (r *NetworkAccessAuthorizationRuleResource) Create(ctx context.Context, req
 			return
 		}
 	}
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)
